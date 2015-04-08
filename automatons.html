@@ -23,33 +23,14 @@
 		</style>
 	</head>
 	<body>
+		<div id="actions">
+			<input type="text" id="rows" size="2" value="0" />
+			<input type="text" id="cols" size="2" value="0" />
+			<input type="button" value="Start grid" onclick="startGrid()" />
+			<input type="button" value="Start simulation" onclick="startSimulation()" /></div>
 		<div id="matrix"></div>
 		<script type="text/javascript">
-
-		/*
-		var matrix = [
-			[0, 0, 0, 0, 0, 0, 1, 0, 0],
-			[0, 0, 0, 0, 1, 0, 1, 1, 0],
-			[0, 0, 0, 0, 1, 0, 1, 0, 0],
-			[0, 0, 0, 0, 1, 0, 0, 0, 0],
-			[0, 0, 1, 0, 0, 0, 0, 0, 0],
-			[1, 0, 1, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0]
-		];
-		*/
-
-		var matrix = [
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-			[0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
-			[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-		];
+		var matrix;
 
 		var aliveNbhSameRow = function(row, col) {
 			var nbh = 0;
@@ -95,7 +76,7 @@
 			renderHtml();
 			if (! isEquals(matrix, newMatrix)) {
 				matrix = newMatrix;
-				setTimeout(renderMatrix, 1000);
+				setTimeout(renderMatrix, 500);
 			}
 
 		}
@@ -123,13 +104,36 @@
 					var span = document.createElement('div');
 					span.innerHTML = val;
 					span.className = "cell " + (val == 0 ? "dead" : "alive");
+					span.onclick = clicked;
+					span.id = row + "-" + col;
 					myNode.appendChild(span);
 				}
 				myNode.appendChild(document.createElement("br"));
 			}
 		}
-
-		setTimeout(renderMatrix, 1000);
+		var clicked = function() {
+			var elements = this.id.split("-");
+			var row = parseInt(elements[0]);
+			var col = parseInt(elements[1]);
+			matrix[row][col] = this.innerHTML == "0" ? 1 : 0;
+			this.innerHTML = matrix[row][col];
+			this.className = "cell " + (matrix[row][col] == 0 ? "dead" : "alive");
+		}
+		function startGrid() {
+			var rows = parseInt(document.getElementById("rows").value);
+			var cols = parseInt(document.getElementById("cols").value);
+			matrix = [];
+			for (var row = 0; row < rows; row++) {
+				matrix[row] = [];
+				for (var col = 0; col < cols; col++) {
+					matrix[row][col] = 0;
+				}
+			}
+			renderHtml();
+		}
+		function startSimulation() {
+			renderMatrix();
+		}
 		</script>
 	</body>
 </html>
