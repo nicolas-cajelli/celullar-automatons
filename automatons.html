@@ -1,0 +1,135 @@
+<html>
+	<head>
+		<title>Automatas</title>
+		<style>
+		.container {
+			display: inline-block;
+			margin-right: 5px;
+			margin-top: 5px;
+		}
+		.cell {
+			border: 1px solid #000;
+			width: 10px;
+			display: inline-block;
+		}
+		.dead {
+			background: #fff;
+			color: #fff;
+		}
+		.alive {
+			background: #000;
+			color: #000;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="matrix"></div>
+		<script type="text/javascript">
+
+		/*
+		var matrix = [
+			[0, 0, 0, 0, 0, 0, 1, 0, 0],
+			[0, 0, 0, 0, 1, 0, 1, 1, 0],
+			[0, 0, 0, 0, 1, 0, 1, 0, 0],
+			[0, 0, 0, 0, 1, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0, 0, 0, 0, 0],
+			[1, 0, 1, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0]
+		];
+		*/
+
+		var matrix = [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+			[0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+			[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		];
+
+		var aliveNbhSameRow = function(row, col) {
+			var nbh = 0;
+			if (col > 0) {
+				nbh += matrix[row][col - 1];
+			}
+			if (col < (matrix[row].length - 1) ) {
+				nbh += matrix[row][col + 1];
+			}
+			return nbh;
+		}
+
+		var aliveNbh = function(row, col) {
+			var nbh = aliveNbhSameRow(row, col);
+			if (row > 0) {
+				nbh += matrix[row - 1][col];
+				nbh += aliveNbhSameRow(row - 1, col);
+			}
+			if (row < (matrix.length - 1)) {
+				nbh += matrix[row + 1][col];
+				nbh += aliveNbhSameRow(row + 1, col);
+			}
+			return nbh;
+		}
+
+		var renderMatrix = function() {
+			var newMatrix = [];
+			for (var row = 0; row < matrix.length; row++) {
+				newMatrix[row] = [];
+				for (var col = 0; col < matrix[row].length; col++) {
+					var nbh = aliveNbh(row, col);
+					var val = matrix[row][col];
+					if ((val + nbh) == 3) {
+						newMatrix[row][col] = 1;
+					} else if ((val + nbh) != 4) {
+						newMatrix[row][col] = 0;
+					} else {
+						newMatrix[row][col] = matrix[row][col];
+					}
+				}
+			}
+
+			renderHtml();
+			if (! isEquals(matrix, newMatrix)) {
+				matrix = newMatrix;
+				setTimeout(renderMatrix, 1000);
+			}
+
+		}
+
+		var isEquals = function(matrix, newMatrix) {
+			for (var row = 0; row < matrix.length; row++) {
+				for (var col = 0; col < matrix[row].length; col++) {
+					if (matrix[row][col] != newMatrix[row][col]) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		var renderHtml = function() {
+			var myNode = document.getElementById("matrix");
+			while (myNode.hasChildNodes()) {
+				myNode.removeChild(myNode.firstChild);
+			}
+			myNode.className = "container";
+			for (var row = 0; row < matrix.length; row++) {
+				for (var col = 0; col < matrix[row].length; col++) {
+					var val = matrix[row][col];
+					var span = document.createElement('div');
+					span.innerHTML = val;
+					span.className = "cell " + (val == 0 ? "dead" : "alive");
+					myNode.appendChild(span);
+				}
+				myNode.appendChild(document.createElement("br"));
+			}
+		}
+
+		setTimeout(renderMatrix, 1000);
+		</script>
+	</body>
+</html>
